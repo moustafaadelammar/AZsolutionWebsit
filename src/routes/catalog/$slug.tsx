@@ -41,7 +41,7 @@ function ProductDetailPage() {
       <div className="container-shell">
         <Link to="/catalog" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground"><Arrow />{ar ? "العودة للكتالوج" : "Back to catalog"}</Link>
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-3xl border border-border bg-card p-7 shadow-sm md:p-10">
+          <div className="product-detail-card rounded-3xl border border-border bg-card p-7 shadow-elevated md:p-10">
             <div className="flex items-start justify-between gap-4">
               <span className="grid size-16 place-items-center rounded-2xl bg-tech-soft text-tech"><item.icon className="size-7" /></span>
               <span className="rounded-full bg-secondary px-3 py-1 text-xs font-bold">{category}</span>
@@ -57,7 +57,7 @@ function ProductDetailPage() {
               <Button asChild variant="outline" size="lg"><Link to="/quote">{ar ? "اطلب عرض سعر" : "Request a quote"}<Arrow /></Link></Button>
             </div>
           </div>
-          <aside className="rounded-3xl bg-ink p-7 text-ink-foreground md:p-9">
+          <aside className="product-detail-aside rounded-3xl bg-ink p-7 text-ink-foreground shadow-elevated md:p-9">
             <p className="text-xs font-bold uppercase tracking-widest text-tech-bright">{ar ? "بيانات المنتج" : "Product information"}</p>
             <dl className="mt-7 grid gap-5">
               <div><dt className="text-xs text-ink-muted">SKU Prefix</dt><dd className="mt-1 font-bold">{item.skuPrefix}</dd></div>
