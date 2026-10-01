@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Clock3, Languages, MapPin, Menu, MessageCircle } from "lucide-react";
+import { ArrowUpRight, Clock3, Languages, MapPin, Menu, MessageCircle, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useLanguage } from "@/components/language-provider";
@@ -61,6 +61,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="header-actions">
+          <div className="header-contact"><PhoneCall className="size-4" /><span>{language === "ar" ? "حلول تقنية للأعمال" : "Business technology"}</span></div>
           <LanguageSwitch />
           <div className="quote-action">
             <Button asChild size="lg"><Link to="/quote">{language === "ar" ? "اطلب عرض سعر" : "Request a Quote"}<ArrowUpRight /></Link></Button>
@@ -115,7 +116,7 @@ export function SiteFooter() {
       <div className="footer-bottom">
         <div className="container-shell footer-bottom-inner">
           <span>© {new Date().getFullYear()} AZ Solution BNS</span>
-          <Link to="/business">{language === "ar" ? "مركز تشغيل الشركة" : "Business Operations Center"}</Link>
+          <span>{language === "ar" ? "حلول تقنية وتوريدات · بني سويف وصعيد مصر" : "Technology & supply · Beni Suef & Upper Egypt"}</span>
         </div>
       </div>
     </footer>
