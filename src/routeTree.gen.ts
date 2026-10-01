@@ -161,6 +161,10 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AdminRoute: typeof AdminRoute
+  CatalogRoute: typeof CatalogRoute
+  CatalogSlugRoute: typeof CatalogSlugRoute
+  InventoryRoute: typeof InventoryRoute
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
