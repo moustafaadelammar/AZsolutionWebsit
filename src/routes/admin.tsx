@@ -80,7 +80,7 @@ function AdminPage() {
     const campaign: Campaign = { id: `CMP-${Date.now().toString(36).toUpperCase()}`, name: campaignName.trim() || (ar ? "حملة جديدة" : "New campaign"), channel: campaignChannel, objective: campaignObjective, budget: Math.max(0, Number(campaignBudget) || 0), startDate: new Date().toISOString().slice(0,10), endDate: "", offer: campaignOffer.trim(), cta: campaignCta.trim() || "Request a Quote", status: "draft", createdAt: new Date().toISOString() };
     const next = [campaign, ...campaigns]; setCampaigns(next); localStorage.setItem("az-campaigns", JSON.stringify(next)); setCampaignName("");
   };
-  const campaignUtm = (campaign: Campaign) => `${typeof window !== "undefined" ? window.location.origin : ""}/quote?utm_source=${campaign.channel}&utm_medium=paid&utm_campaign=${encodeURIComponent(campaign.name.toLowerCase().replace(/\\s+/g,"-"))}`;
+  const campaignUtm = (campaign: Campaign) => `${typeof window !== "undefined" ? window.location.origin : ""}/quote?utm_source=${campaign.channel}&utm_medium=paid&utm_campaign=${encodeURIComponent(campaign.name.toLowerCase().replace(/\s+/g,"-"))}`;
   const copyCampaign = async (campaign: Campaign) => { const text = [`Campaign: ${campaign.name}`, `Channel: ${campaign.channel}`, `Objective: ${campaign.objective}`, `Budget: ${campaign.budget} EGP`, `Offer: ${campaign.offer}`, `CTA: ${campaign.cta}`, `UTM: ${campaignUtm(campaign)}`].join("\\n"); await navigator.clipboard?.writeText(text); };
   const updateCampaign = (id: string, patch: Partial<Campaign>) => { const next = campaigns.map((x) => x.id === id ? { ...x, ...patch } : x); setCampaigns(next); localStorage.setItem("az-campaigns", JSON.stringify(next)); };
 
