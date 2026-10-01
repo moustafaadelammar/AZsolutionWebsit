@@ -19,7 +19,10 @@ type Lead = {
   status?: LeadStatus;
   notes?: string;
   updatedAt?: string;
-  attachment?: { name: string; size: number; type: string };\n  quotationAmount?: number;\n  quotationCurrency?: "EGP" | "USD";\n  nextFollowUpAt?: string;
+  attachment?: { name: string; size: number; type: string };
+  quotationAmount?: number;
+  quotationCurrency?: "EGP" | "USD";
+  nextFollowUpAt?: string;
 };
 
 const statuses: LeadStatus[] = ["new", "contacted", "quoted", "won", "lost"];
@@ -126,7 +129,8 @@ function AdminPage() {
       `Selected: ${lead.selectedItems?.join(", ") || "-"}`,
       `Details: ${lead.details || "-"}`,
       `Notes: ${lead.notes || "-"}`,
-    ].join("\n");
+    ].join("
+");
     await navigator.clipboard?.writeText(summary);
   };
 
@@ -136,9 +140,10 @@ function AdminPage() {
     const rows = leads.map((lead) => [
       lead.id, lead.createdAt, lead.name, lead.phone, lead.email, lead.service,
       lead.selectedItems?.join(" | "), statusLabel(lead.status || "new"), lead.details, lead.notes,
-      lead.attachment ? `${lead.attachment.name} (${lead.attachment.size} bytes)` : "",
+      lead.quotationAmount ?? "", lead.quotationCurrency || "", lead.nextFollowUpAt || "", lead.attachment ? `${lead.attachment.name} (${lead.attachment.size} bytes)` : "",
     ].map(esc).join(","));
-    const csv = "\uFEFF" + [headers.map(esc).join(","), ...rows].join("\n");
+    const csv = "\uFEFF" + [headers.map(esc).join(","), ...rows].join("
+");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -158,7 +163,8 @@ function AdminPage() {
     { label: ar ? "كل الطلبات" : "Total", value: leads.length, icon: Users },
     { label: ar ? "جديد" : "New", value: counts.new, icon: Clock3 },
     { label: ar ? "تم التسعير" : "Quoted", value: counts.quoted, icon: FileText },
-    { label: ar ? "تمت الصفقة" : "Won", value: counts.won, icon: CheckCircle2 },\n    { label: ar ? "قيمة العروض" : "Quoted value", value: quotedValue.toLocaleString(ar ? "ar-EG" : "en-US"), icon: FileText },
+    { label: ar ? "تمت الصفقة" : "Won", value: counts.won, icon: CheckCircle2 },
+    { label: ar ? "قيمة العروض" : "Quoted value", value: quotedValue.toLocaleString(ar ? "ar-EG" : "en-US"), icon: FileText },
   ];
 
   return <>
@@ -174,7 +180,7 @@ function AdminPage() {
         <Button asChild variant="outline"><Link to="/inventory"><Package />{ar ? "إدارة المخزون والمنتجات" : "Inventory & Products"}</Link></Button>
       </div>
       <div className="container-shell">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {statCards.map(({ label, value, icon: Icon }) => (
             <div key={label} className="stat-card">
               <div className="flex items-center justify-between">
@@ -201,7 +207,7 @@ function AdminPage() {
             </select>
             <div className="flex gap-2">
               {leads.length > 0 && <Button variant="outline" onClick={exportCsv}><Download />{ar ? "تصدير CSV" : "Export CSV"}</Button>}
-              {leads.length > 0 && <Button variant="outline" onClick={clear}><Trash2 />{ar ? "مسح الكل" : "Clear all"}</Button>}
+              {leads.length > 0 && <Button variant="outline" onClick={clear}><Trash2 />{ar ? "مسح الكل" : "Clear all"}</Button>}              <Button variant="outline" onClick={backupData}><DatabaseBackup />{ar ? "نسخة احتياطية" : "Backup"}</Button>              <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent">                <Upload className="h-4 w-4" />{ar ? "استرجاع" : "Restore"}                <input type="file" accept="application/json,.json" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) void restoreData(file); e.currentTarget.value = ""; }} />              </label>
             </div>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
