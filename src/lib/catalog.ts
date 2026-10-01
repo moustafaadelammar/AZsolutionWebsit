@@ -27,3 +27,31 @@ export const catalog: CatalogItem[] = [
  {slug:"storage",title:{ar:"وحدات التخزين",en:"Storage Solutions"},category:{ar:"تخزين",en:"Storage"},categoryId:"storage",description:{ar:"تخزين شبكي ووحدات أقراص وحلول توسعة للمؤسسات.",en:"Network storage, drives and scalable storage expansion."},icon:HardDrive,skuPrefix:"STR",brands:["QNAP","Synology","Seagate","WD"],unit:"piece",stockState:"on-request",models:["NAS","SATA HDD","Enterprise SSD","Expansion Unit"]},
  {slug:"routers",title:{ar:"الراوترات",en:"Routers"},category:{ar:"شبكات",en:"Networking"},categoryId:"routers",description:{ar:"حلول ربط الإنترنت والفروع وتوجيه حركة الشبكة.",en:"Internet, branch connectivity and routing solutions."},icon:Router,skuPrefix:"RTR",brands:["Cisco","MikroTik","Fortinet","TP-Link"],unit:"piece",stockState:"on-request",models:["Branch Router","VPN Router","4G/5G Router"]}
 ];
+
+export type InventoryRecord = {
+  sku: string;
+  name: LocalText;
+  categoryId: CatalogCategory;
+  brand: string;
+  model: string;
+  unit: CatalogItem["unit"];
+  quantity: number;
+  reorderLevel: number;
+  state: StockState;
+  updatedAt: string;
+};
+
+export const inventorySeed: InventoryRecord[] = catalog.flatMap((item) =>
+  item.models.slice(0, 2).map((model, index) => ({
+    sku: `${item.skuPrefix}-${String(index + 1).padStart(3, "0")}`,
+    name: { ar: `${item.title.ar} — ${model}`, en: `${item.title.en} — ${model}` },
+    categoryId: item.categoryId,
+    brand: item.brands[0] || "Multi-brand",
+    model,
+    unit: item.unit,
+    quantity: 0,
+    reorderLevel: 1,
+    state: item.stockState,
+    updatedAt: new Date(0).toISOString(),
+  }))
+);
