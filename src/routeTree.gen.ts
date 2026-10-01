@@ -11,11 +11,36 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CatalogRouteImport } from './routes/catalog'
+import { Route as CatalogSlugRouteImport } from './routes/catalog/$slug'
+import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SolutionsRouteImport } from './routes/solutions'
+
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogRoute = CatalogRouteImport.update({
+  id: '/catalog',
+  path: '/catalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogSlugRoute = CatalogSlugRouteImport.update({
+  id: '/catalog/$slug',
+  path: '/catalog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryRoute = InventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -54,6 +79,10 @@ const SolutionsRoute = SolutionsRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/admin': typeof AdminRoute
+  '/catalog': typeof CatalogRoute
+  '/catalog/$slug': typeof CatalogSlugRoute
+  '/inventory': typeof InventoryRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
@@ -63,6 +92,10 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRoute
 }
 export interface FileRoutesByTo {
+  '/admin': typeof AdminRoute
+  '/catalog': typeof CatalogRoute
+  '/catalog/$slug': typeof CatalogSlugRoute
+  '/inventory': typeof InventoryRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
@@ -72,6 +105,10 @@ export interface FileRoutesByTo {
   '/solutions': typeof SolutionsRoute
 }
 export interface FileRoutesById {
+  '/admin': typeof AdminRoute
+  '/catalog': typeof CatalogRoute
+  '/catalog/$slug': typeof CatalogSlugRoute
+  '/inventory': typeof InventoryRoute
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
@@ -84,6 +121,10 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/admin'
+    | '/catalog'
+    | '/catalog/$slug'
+    | '/inventory'
     | '/'
     | '/about'
     | '/contact'
@@ -93,6 +134,10 @@ export interface FileRouteTypes {
     | '/solutions'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/admin'
+    | '/catalog'
+    | '/catalog/$slug'
+    | '/inventory'
     | '/'
     | '/about'
     | '/contact'
@@ -102,6 +147,10 @@ export interface FileRouteTypes {
     | '/solutions'
   id:
     | '__root__'
+    | '/admin'
+    | '/catalog'
+    | '/catalog/$slug'
+    | '/inventory'
     | '/'
     | '/about'
     | '/contact'
@@ -128,6 +177,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalog': {
+      id: '/catalog'
+      path: '/catalog'
+      fullPath: '/catalog'
+      preLoaderRoute: typeof CatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalog/$slug': {
+      id: '/catalog/$slug'
+      path: '/catalog/$slug'
+      fullPath: '/catalog/$slug'
+      preLoaderRoute: typeof CatalogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory': {
+      id: '/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -176,6 +253,10 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  AdminRoute: AdminRoute,
+  CatalogRoute: CatalogRoute,
+  CatalogSlugRoute: CatalogSlugRoute,
+  InventoryRoute: InventoryRoute,
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
