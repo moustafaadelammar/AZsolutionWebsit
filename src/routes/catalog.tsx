@@ -134,7 +134,8 @@ function CatalogPage() {
                 <p className="mt-3 text-sm leading-7 text-muted-foreground">{ar ? description.ar : description.en}</p>
                 <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-semibold"><span className="rounded-full border border-border px-2.5 py-1">SKU: {itemSku}</span><span className="rounded-full border border-border px-2.5 py-1">{stockLabel(item.stockState)}</span><span className="rounded-full border border-border px-2.5 py-1">{unitLabel(item.unit)}</span></div>
                 <p className="mt-3 text-xs text-muted-foreground">{ar ? "العلامات: " : "Brands: "}{item.brands.join(" · ")}</p>
-                <div className="mt-6 grid gap-2 sm:grid-cols-2">
+                <div className="mt-6 grid gap-2 sm:grid-cols-3">
+                  <Button asChild variant="outline"><Link to="/catalog/$slug" params={{ slug }}>{ar ? "التفاصيل" : "Details"}<Arrow /></Link></Button>
                   <Button type="button" variant={isSelected ? "secondary" : "default"} onClick={() => addToRequest(itemTitle)} disabled={isSelected}>
                     {isSelected ? <><Check />{ar ? "تمت الإضافة" : "Added"}</> : ar ? "أضف للطلب" : "Add to request"}
                   </Button>
