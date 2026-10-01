@@ -39,7 +39,10 @@ function QuotePage() {
     setErrors(next);
     if (Object.keys(next).length === 0) {
       const leadId = `AZ-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${Math.random().toString(36).slice(2,7).toUpperCase()}`;
-      const lead = { id: leadId, createdAt: new Date().toISOString(), name, phone, email, service, details, selectedItems };
+      const attachment = file instanceof File && file.size > 0
+        ? { name: file.name, size: file.size, type: file.type }
+        : undefined;
+      const lead = { id: leadId, createdAt: new Date().toISOString(), name, phone, email, service, details, selectedItems, attachment };
       const existingLeads = JSON.parse(localStorage.getItem("az-leads") || "[]") as typeof lead[];
       localStorage.setItem("az-leads", JSON.stringify([lead, ...existingLeads].slice(0, 100)));
       localStorage.setItem("az-last-lead", JSON.stringify(lead));
