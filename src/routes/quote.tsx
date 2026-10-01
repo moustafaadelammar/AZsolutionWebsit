@@ -12,12 +12,14 @@ export const Route = createFileRoute("/quote")({ head: () => ({ meta: [
   { title: "Request a Quote | AZ Solution BNS" }, { name: "description", content: "Request a tailored quote for networking, servers, CCTV, access control, VoIP, UPS, IT supplies or technical support." }, { property: "og:title", content: "Request a Quote | AZ Solution BNS" }, { property: "og:description", content: "Tell AZ Solution about your technology requirements through a structured quote request." }, { property: "og:type", content: "website" }, { property: "og:url", content: "/quote" }, { name: "twitter:card", content: "summary_large_image" }], links: [{ rel: "canonical", href: "/quote" }] }), component: QuotePage });
 
 type Errors = Partial<Record<"name" | "phone" | "email" | "service" | "details" | "file", string>>;
+function getMarketingAttribution() { if (typeof window === "undefined") return { source: "website-quote", campaign: undefined as string | undefined }; const p = new URLSearchParams(window.location.search); const source = p.get("utm_source") || "website-quote"; const campaign = p.get("utm_campaign") || undefined; const mapped = source === "whatsapp" ? "whatsapp" : source === "phone" ? "phone" : source === "referral" ? "referral" : source === "facebook" || source === "instagram" || source === "google" ? "website-quote" : "website-quote"; return { source: mapped, campaign }; }
 function QuotePage() {
   const { language } = useLanguage();
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  useEffect(() => { const load=()=>setSelectedItems(JSON.parse(localStorage.getItem("az-quote-items")||"[]") as string[]); load(); window.addEventListener("az-quote-updated",load); return ()=>window.removeEventListener("az-quote-updated",load); }, []);
+  const [attribution, setAttribution] = useState(getMarketingAttribution);
+  useEffect(() => { setAttribution(getMarketingAttribution()); const load=()=>setSelectedItems(JSON.parse(localStorage.getItem("az-quote-items")||"[]") as string[]); load(); window.addEventListener("az-quote-updated",load); return ()=>window.removeEventListener("az-quote-updated",load); }, []);
   const ar = language === "ar";
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,7 +44,7 @@ function QuotePage() {
       const attachment = file instanceof File && file.size > 0
         ? { name: file.name, size: file.size, type: file.type }
         : undefined;
-      const lead = { id: leadId, createdAt: new Date().toISOString(), name, phone, email, service, details, selectedItems, attachment, source: "website-quote", priority: "normal" as const, status: "new" as const };
+      const lead = { id: leadId, createdAt: new Date().toISOString(), name, phone, email, service, details, selectedItems, attachment, source: attribution.source as "website-quote" | "whatsapp" | "phone" | "referral" | "other", campaign: attribution.campaign, priority: "normal" as const, status: "new" as const };
       const existingLeads = JSON.parse(localStorage.getItem("az-leads") || "[]") as typeof lead[];
       localStorage.setItem("az-leads", JSON.stringify([lead, ...existingLeads].slice(0, 100)));
       localStorage.setItem("az-last-lead", JSON.stringify(lead));
