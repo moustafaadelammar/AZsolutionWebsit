@@ -129,8 +129,7 @@ function AdminPage() {
       `Selected: ${lead.selectedItems?.join(", ") || "-"}`,
       `Details: ${lead.details || "-"}`,
       `Notes: ${lead.notes || "-"}`,
-    ].join("
-");
+    ].join("\n");
     await navigator.clipboard?.writeText(summary);
   };
 
@@ -142,8 +141,7 @@ function AdminPage() {
       lead.selectedItems?.join(" | "), statusLabel(lead.status || "new"), lead.details, lead.notes,
       lead.quotationAmount ?? "", lead.quotationCurrency || "", lead.nextFollowUpAt || "", lead.attachment ? `${lead.attachment.name} (${lead.attachment.size} bytes)` : "",
     ].map(esc).join(","));
-    const csv = "\uFEFF" + [headers.map(esc).join(","), ...rows].join("
-");
+    const csv = "\uFEFF" + [headers.map(esc).join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -211,6 +209,23 @@ function AdminPage() {
         </div>
 
         <div className="mt-6 rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold">{ar ? "مسار المبيعات" : "Sales pipeline"}</p>
+              <p className="text-xs text-muted-foreground">{ar ? "توزيع الطلبات حسب المرحلة الحالية" : "Lead distribution by current stage"}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            {statuses.map((status) => (
+              <button key={status} type="button" onClick={() => setStatusFilter(status)}
+                className="rounded-xl border border-border bg-background p-3 text-start transition-colors hover:bg-accent">
+                <p className="text-xs font-semibold text-muted-foreground">{statusLabel(status)}</p>
+                <p className="mt-1 text-2xl font-black">{counts[status]}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative min-w-0 flex-1">
               <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
