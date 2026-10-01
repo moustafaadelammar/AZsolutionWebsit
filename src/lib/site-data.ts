@@ -14,6 +14,8 @@ export const SITE_CONFIG = {
   email: "[البريد الإلكتروني / Email address]",
   address: "[العنوان / Office address]",
   whatsappUrl: "#contact-placeholder",
+  mapsUrl: "#contact-placeholder",
+  businessHours: { ar: "الأحد–الخميس | 8:30 ص–5:00 م", en: "Sun–Thu | 8:30 AM–5:00 PM" },
   social: ["LinkedIn", "Facebook"],
 } as const;
 
