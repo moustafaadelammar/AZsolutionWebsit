@@ -28,7 +28,7 @@ function QuotePage() {
     const email = String(form.get("email") ?? "").trim();
     const service = String(form.get("service") ?? "");
     const details = String(form.get("details") ?? "").trim();
-    const selected = selectedItems.length ? `\nSelected categories: ${selectedItems.join(", ")}` : "";
+    const selected = selectedItems.length ? `\nSelected products: ${selectedItems.join(", ")}` : "";
     const file = form.get("file");
     if (name.length < 2) next.name = ar ? "أدخل الاسم أو اسم الشركة." : "Enter a person or company name.";
     if (!/^\+?[0-9\s()-]{7,20}$/.test(phone)) next.phone = ar ? "أدخل رقم هاتف صالحاً." : "Enter a valid phone number.";
@@ -42,7 +42,7 @@ function QuotePage() {
       const attachment = file instanceof File && file.size > 0
         ? { name: file.name, size: file.size, type: file.type }
         : undefined;
-      const lead = { id: leadId, createdAt: new Date().toISOString(), name, phone, email, service, details, selectedItems, attachment };
+      const lead = { id: leadId, createdAt: new Date().toISOString(), name, phone, email, service, details, selectedItems, attachment, source: "website-quote", status: "new" as const };
       const existingLeads = JSON.parse(localStorage.getItem("az-leads") || "[]") as typeof lead[];
       localStorage.setItem("az-leads", JSON.stringify([lead, ...existingLeads].slice(0, 100)));
       localStorage.setItem("az-last-lead", JSON.stringify(lead));
