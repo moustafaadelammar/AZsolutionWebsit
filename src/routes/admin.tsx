@@ -132,7 +132,7 @@ function AdminPage() {
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return leads.filter((lead) => {
-      const hay = [lead.id, lead.name, lead.phone, lead.email, lead.service, lead.details, lead.notes, lead.campaign].join(" ").toLowerCase();
+      const hay = [lead.id, lead.name, lead.phone, lead.email, lead.service, lead.details, lead.notes, lead.campaign, sourceLabel(lead.source || "website-quote"), priorityLabel(lead.priority || "normal")].join(" ").toLowerCase();
       return hay.includes(q) && (statusFilter === "all" || (lead.status || "new") === statusFilter);
     });
   }, [leads, query, statusFilter]);
