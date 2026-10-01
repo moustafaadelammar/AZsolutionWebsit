@@ -134,7 +134,6 @@ export interface FileRouteTypes {
     | '/solutions'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/business'
     | '/admin'
     | '/catalog'
     | '/catalog/$slug'
