@@ -54,6 +54,8 @@ function CatalogPage() {
   }, [q, category]);
 
   const Arrow = ar ? ArrowLeft : ArrowRight;
+  const stockLabel = (state: string) => ({ available: ar ? "متاح" : "Available", "on-request": ar ? "حسب الطلب" : "On request", "out-of-stock": ar ? "غير متاح" : "Out of stock" }[state] || state);
+  const unitLabel = (unit: string) => ({ piece: ar ? "قطعة" : "piece", meter: ar ? "متر" : "meter", set: ar ? "طقم" : "set", service: ar ? "خدمة" : "service" }[unit] || unit);
 
   const addToRequest = (title: string) => {
     if (selected.includes(title)) return;
@@ -119,6 +121,8 @@ function CatalogPage() {
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(({ slug, title, category: itemCategory, description, icon: Icon }) => {
             const itemTitle = ar ? title.ar : title.en;
+            const itemSku = `${catalog.find((x) => x.slug === slug)?.skuPrefix || "AZ"}-${slug.toUpperCase()}`;
+            const item = catalog.find((x) => x.slug === slug)!;
             const isSelected = selected.includes(itemTitle);
             return (
               <article key={slug} className="content-card p-7">
@@ -128,6 +132,8 @@ function CatalogPage() {
                 </div>
                 <h2 className="mt-6 text-lg font-bold">{itemTitle}</h2>
                 <p className="mt-3 text-sm leading-7 text-muted-foreground">{ar ? description.ar : description.en}</p>
+                <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-semibold"><span className="rounded-full border border-border px-2.5 py-1">SKU: {itemSku}</span><span className="rounded-full border border-border px-2.5 py-1">{stockLabel(item.stockState)}</span><span className="rounded-full border border-border px-2.5 py-1">{unitLabel(item.unit)}</span></div>
+                <p className="mt-3 text-xs text-muted-foreground">{ar ? "العلامات: " : "Brands: "}{item.brands.join(" · ")}</p>
                 <div className="mt-6 grid gap-2 sm:grid-cols-2">
                   <Button type="button" variant={isSelected ? "secondary" : "default"} onClick={() => addToRequest(itemTitle)} disabled={isSelected}>
                     {isSelected ? <><Check />{ar ? "تمت الإضافة" : "Added"}</> : ar ? "أضف للطلب" : "Add to request"}
