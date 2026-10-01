@@ -42,7 +42,7 @@ function QuotePage() {
       const attachment = file instanceof File && file.size > 0
         ? { name: file.name, size: file.size, type: file.type }
         : undefined;
-      const lead = { id: leadId, createdAt: new Date().toISOString(), name, phone, email, service, details, selectedItems, attachment, source: "website-quote", status: "new" as const };
+      const lead = { id: leadId, createdAt: new Date().toISOString(), name, phone, email, service, details, selectedItems, attachment, source: "website-quote", priority: "normal" as const, status: "new" as const };
       const existingLeads = JSON.parse(localStorage.getItem("az-leads") || "[]") as typeof lead[];
       localStorage.setItem("az-leads", JSON.stringify([lead, ...existingLeads].slice(0, 100)));
       localStorage.setItem("az-last-lead", JSON.stringify(lead));
