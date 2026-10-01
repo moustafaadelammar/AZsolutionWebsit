@@ -194,6 +194,12 @@ function AdminPage() {
     return { overdue, text: new Date(lead.nextFollowUpAt).toLocaleString(ar ? "ar-EG" : "en-US") };
   };
 
+  const sourceCounts = useMemo(() => (["website-quote","whatsapp","phone","referral","other"] as LeadSource[]).map((source) => ({ source, count: leads.filter((lead) => (lead.source || "website-quote") === source).length })), [leads]);
+  const campaignCounts = useMemo(() => { const map = new Map<string, number>(); leads.forEach((lead) => { if (lead.campaign) map.set(lead.campaign, (map.get(lead.campaign) || 0) + 1); }); return [...map.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8); }, [leads]);
+  const adCopy = (campaign: Campaign) => ar
+    ? `🚀 ${campaign.offer || "حلول تقنية متكاملة"}\n\nAZ Solution BNS تساعد الشركات في بني سويف وصعيد مصر في الشبكات، السيرفرات، كاميرات المراقبة، الحماية والدعم الفني.\n\n🎯 ${campaign.cta}\n📍 بني سويف وصعيد مصر\n\n#AZSolution #BeniSuef #IT #Networking #CCTV`
+    : `🚀 ${campaign.offer || "Complete business technology solutions"}\n\nAZ Solution BNS helps businesses across Beni Suef & Upper Egypt with networking, servers, CCTV, security and IT support.\n\n🎯 ${campaign.cta}\n📍 Beni Suef & Upper Egypt\n\n#AZSolution #BeniSuef #IT #Networking #CCTV`;
+
   const statCards = [
     { label: ar ? "كل الطلبات" : "Total", value: leads.length, icon: Users },
     { label: ar ? "جديد" : "New", value: counts.new, icon: Clock3 },
@@ -290,6 +296,22 @@ function AdminPage() {
             <Button onClick={saveCampaign}><Save />{ar ? "حفظ الحملة" : "Save campaign"}</Button>
           </div>
           {campaigns.length > 0 && <div className="mt-5 grid gap-3">{campaigns.slice(0,6).map((campaign)=><div key={campaign.id} className="rounded-xl border border-border bg-background p-4"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="font-bold">{campaign.name}</p><p className="text-xs text-muted-foreground">{campaign.channel} · {campaign.objective} · {campaign.budget.toLocaleString()} EGP</p></div><div className="flex items-center gap-2"><select value={campaign.status} onChange={(e)=>updateCampaign(campaign.id,{status:e.target.value as Campaign["status"]})} className="h-9 rounded-md border border-input bg-background px-2 text-xs"><option value="draft">Draft</option><option value="ready">Ready</option><option value="active">Active</option><option value="paused">Paused</option></select><Button variant="outline" size="sm" onClick={()=>copyCampaign(campaign)}><Copy className="h-4 w-4" />{ar ? "نسخ" : "Copy"}</Button></div></div><div className="mt-3 grid gap-2 md:grid-cols-2"><div className="rounded-lg bg-secondary p-3 text-sm"><b>{ar ? "العرض:" : "Offer:"}</b> {campaign.offer}<br/><b>CTA:</b> {campaign.cta}</div><div className="rounded-lg bg-secondary p-3 text-xs break-all"><div className="mb-1 flex items-center gap-1 font-bold"><Link2 className="h-3.5 w-3.5" />UTM</div>{campaignUtm(campaign)}</div></div></div>)}</div>}
+        </div>
+
+        <div className="mt-8 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+            <div className="flex items-center gap-2"><Users className="h-5 w-5 text-tech" /><p className="font-bold">{ar ? "مصادر العملاء" : "Lead Sources"}</p></div>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">{sourceCounts.map(({source,count})=><button key={source} type="button" onClick={()=>setQuery(sourceLabel(source).toLowerCase())} className="flex items-center justify-between rounded-xl border border-border p-3 text-start hover:bg-accent"><span className="text-sm font-semibold">{sourceLabel(source)}</span><span className="text-xl font-black">{count}</span></button>)}</div>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+            <div className="flex items-center gap-2"><Megaphone className="h-5 w-5 text-tech" /><p className="font-bold">{ar ? "الحملات التي جلبت عملاء" : "Campaign Attribution"}</p></div>
+            {campaignCounts.length ? <div className="mt-4 space-y-2">{campaignCounts.map(([name,count])=><div key={name} className="flex items-center justify-between rounded-xl bg-secondary p-3"><span className="truncate text-sm font-semibold">{name}</span><span className="rounded-full bg-tech-soft px-2.5 py-1 text-xs font-bold text-tech">{count} {ar ? "عميل" : "leads"}</span></div>)}</div> : <p className="mt-4 text-sm text-muted-foreground">{ar ? "ستظهر بيانات الحملات هنا بعد وصول طلبات من روابط UTM." : "Campaigns will appear here after leads arrive through UTM links."}</p>}
+          </div>
+        </div>
+        <div className="mt-8 rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex items-center gap-2"><FileText className="h-5 w-5 text-tech" /><p className="font-bold">{ar ? "استوديو محتوى الإعلانات" : "Ad Copy Studio"}</p></div>
+          <p className="mt-1 text-sm text-muted-foreground">{ar ? "نسخة جاهزة للنشر لكل حملة — عدّلها حسب العرض والمنصة." : "Ready-to-edit ad copy for each campaign. Adjust it for the platform and offer."}</p>
+          {campaigns.length ? <div className="mt-4 grid gap-3">{campaigns.slice(0,4).map((campaign)=><div key={campaign.id} className="rounded-xl border border-border bg-background p-4"><div className="flex items-center justify-between gap-3"><div><p className="font-bold">{campaign.name}</p><p className="text-xs text-muted-foreground">{campaign.channel} · {campaign.objective}</p></div><Button variant="outline" size="sm" onClick={()=>navigator.clipboard?.writeText(adCopy(campaign))}><Copy className="h-4 w-4" />{ar ? "نسخ النص" : "Copy copy"}</Button></div><pre className="mt-3 max-h-44 overflow-auto whitespace-pre-wrap rounded-lg bg-secondary p-3 text-xs leading-6 font-sans">{adCopy(campaign)}</pre></div>)}</div> : <p className="mt-4 text-sm text-muted-foreground">{ar ? "أنشئ أول حملة من مركز الدعاية بالأعلى." : "Create your first campaign in the Marketing Center above."}</p>}
         </div>
 
         <div className="mt-6 grid gap-4">
