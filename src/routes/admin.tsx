@@ -18,6 +18,7 @@ type Lead = {
   status?: LeadStatus;
   notes?: string;
   updatedAt?: string;
+  attachment?: { name: string; size: number; type: string };
 };
 
 const statuses: LeadStatus[] = ["new", "contacted", "quoted", "won", "lost"];
@@ -105,6 +106,7 @@ function AdminPage() {
     const rows = leads.map((lead) => [
       lead.id, lead.createdAt, lead.name, lead.phone, lead.email, lead.service,
       lead.selectedItems?.join(" | "), statusLabel(lead.status || "new"), lead.details, lead.notes,
+      lead.attachment ? `${lead.attachment.name} (${lead.attachment.size} bytes)` : "",
     ].map(esc).join(","));
     const csv = "\uFEFF" + [headers.map(esc).join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
@@ -204,6 +206,17 @@ function AdminPage() {
               </div>
 
               <div className="mt-5 rounded-lg bg-secondary p-4 text-sm leading-7">{lead.details || (ar ? "بدون تفاصيل إضافية." : "No additional details.")}</div>
+              {lead.attachment && (
+                <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-border bg-background p-3 text-sm">
+                  <div className="min-w-0">
+                    <p className="font-semibold">{ar ? "ملف مرفق" : "Attachment"}</p>
+                    <p className="truncate text-xs text-muted-foreground">{lead.attachment.name}</p>
+                  </div>
+                  <span className="shrink-0 text-xs text-muted-foreground">
+                    {(lead.attachment.size / 1024 / 1024).toFixed(2)} MB
+                  </span>
+                </div>
+              )}
 
               <div className="mt-4">
                 <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{ar ? "ملاحظات المتابعة" : "Follow-up notes"}</label>
