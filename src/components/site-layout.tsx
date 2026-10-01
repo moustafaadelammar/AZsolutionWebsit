@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Languages, MapPin, Menu, MessageCircle } from "lucide-react";
+import { ArrowUpRight, Languages, MapPin, Menu, MessageCircle, Clock3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useLanguage } from "@/components/language-provider";
@@ -86,7 +86,7 @@ export function SiteFooter() {
         <div id="contact-placeholder">
           <h2 className="text-sm font-bold uppercase tracking-widest text-ink-foreground">{language === "ar" ? "بيانات التواصل" : "Contact details"}</h2>
           <div className="mt-4 grid gap-3 text-sm text-ink-muted">
-            <span>{SITE_CONFIG.phone}</span><span>{SITE_CONFIG.email}</span><span>{SITE_CONFIG.address}</span>
+            <span>{SITE_CONFIG.phone}</span><span>{SITE_CONFIG.email}</span><span>{SITE_CONFIG.address}</span><span className="flex items-center gap-2"><Clock3 className="size-4 text-tech" />{t(SITE_CONFIG.businessHours)}</span>
             <span className="text-xs text-tech">{language === "ar" ? "بيانات مؤقتة — تُستبدل قبل النشر" : "Placeholders — replace before publishing"}</span>
           </div>
         </div>
