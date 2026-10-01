@@ -61,7 +61,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="header-actions">
-          <div className="header-contact"><PhoneCall className="size-4" /><span>{language === "ar" ? "حلول تقنية للأعمال" : "Business technology"}</span></div>
+          <a className="header-contact" href={`tel:${SITE_CONFIG.phone.replace(/\D/g, "")}`}><PhoneCall className="size-4" /><span>{SITE_CONFIG.phone}</span></a>
           <LanguageSwitch />
           <div className="quote-action">
             <Button asChild size="lg"><Link to="/quote">{language === "ar" ? "اطلب عرض سعر" : "Request a Quote"}<ArrowUpRight /></Link></Button>
