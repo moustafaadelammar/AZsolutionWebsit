@@ -187,3 +187,29 @@
 
 @keyframes reveal-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
+
+/* AZ Solution premium polish */
+@utility brand-mark { display: grid; width: 2.65rem; height: 2.65rem; place-items: center; border-radius: 0.8rem; background: linear-gradient(135deg, var(--primary), var(--tech)); color: white; font-family: var(--font-display-family); font-weight: 800; box-shadow: 0 10px 25px oklch(0.25 0.08 250 / 0.18); transition: transform 180ms ease, box-shadow 180ms ease; }
+.brand-mark:hover { transform: translateY(-2px) rotate(-2deg); box-shadow: 0 14px 30px oklch(0.25 0.08 250 / 0.22); }
+@utility hero-chip { display: flex; align-items: center; gap: 0.55rem; min-height: 2.75rem; padding: 0.7rem 0.8rem; border: 1px solid var(--ink-line); background: oklch(0.22 0.052 251 / 0.58); border-radius: 0.7rem; color: var(--ink-muted); font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(8px); }
+@utility stat-card { display: flex; min-height: 7.5rem; flex-direction: column; justify-content: center; gap: 0.4rem; background: var(--background); padding: 1.5rem 1.75rem; }
+.stat-card strong { font-family: var(--font-display-family); font-size: 1.8rem; line-height: 1; color: var(--primary); }
+.stat-card span { color: var(--muted-foreground); font-size: 0.78rem; font-weight: 600; }
+@utility content-card { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 1rem; background: var(--card); box-shadow: 0 8px 28px oklch(0.2 0.03 250 / 0.05); transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease; }
+.content-card::after { content: ""; position: absolute; inset-inline-start: 0; bottom: 0; height: 2px; width: 0; background: var(--tech); transition: width 240ms ease; }
+.content-card:hover { transform: translateY(-4px); border-color: color-mix(in oklab, var(--tech) 35%, var(--border)); box-shadow: var(--shadow-elevated); }
+.content-card:hover::after { width: 100%; }
+@utility process-card { position: relative; min-height: 13rem; border: 1px solid var(--border); border-radius: 1rem; background: var(--card); padding: 1.5rem; transition: transform 220ms ease, box-shadow 220ms ease; }
+.process-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-elevated); }
+.process-card > span { display: inline-flex; font-family: var(--font-display-family); font-size: 0.75rem; font-weight: 800; color: var(--tech); letter-spacing: 0.12em; }
+.process-card h3 { margin-top: 2.5rem; font-size: 1.05rem; font-weight: 800; }
+.process-card p { margin-top: 0.65rem; color: var(--muted-foreground); font-size: 0.82rem; line-height: 1.8; }
+@utility project-card { border: 1px solid var(--ink-line); border-radius: 1rem; background: var(--ink-panel); padding: 1.75rem; transition: transform 220ms ease, border-color 220ms ease, background 220ms ease; }
+.project-card:hover { transform: translateY(-4px); border-color: var(--tech-bright); background: color-mix(in oklab, var(--ink-panel) 88%, var(--tech)); }
+@utility quote-band { background: linear-gradient(135deg, var(--primary), color-mix(in oklab, var(--primary) 70%, var(--tech))); }
+.hero-section { isolation: isolate; }
+@media (max-width: 640px) {
+  .hero-section h1 { font-size: clamp(2.35rem, 12vw, 3.8rem); }
+  .stat-card { min-height: 6.25rem; }
+  .content-card { border-radius: 0.85rem; }
+}
