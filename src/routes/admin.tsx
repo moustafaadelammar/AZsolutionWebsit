@@ -259,7 +259,7 @@ function AdminPage() {
           </div>
         </div>
 
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative min-w-0 flex-1">
               <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input value={query} onChange={(e) => setQuery(e.target.value)}
@@ -279,7 +279,6 @@ function AdminPage() {
           <p className="mt-3 text-xs text-muted-foreground">
             {ar ? `عرض ${visible.length} من ${leads.length} طلب • البيانات محلية وغير متاحة من جهاز آخر.` : `Showing ${visible.length} of ${leads.length} leads • Local data is not available from another device.`}
           </p>
-        </div>
 
         <div className="mt-8 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
