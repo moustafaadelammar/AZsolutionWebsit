@@ -508,3 +508,10 @@ section.py-16 > .container-shell {
 .catalog-card-actions{margin-top:auto;padding-top:1.5rem}
 @media (min-width:1200px){.header-contact{display:flex}.desktop-nav{margin-inline:auto}.header-inner{gap:1rem}}
 @media (max-width:767px){.header-actions{display:none}.brand-sub{font-size:.47rem;letter-spacing:.08em}.brand-name{font-size:.88rem}.brand-mark{width:2.35rem;height:2.35rem}.mobile-actions{gap:.35rem}.mobile-menu{width:min(88vw,23rem)}.footer-bottom-inner{font-size:.68rem}}
+
+.quote-form{position:relative;overflow:hidden}
+.quote-form:before{content:"";position:absolute;inset-inline-end:-8rem;top:-10rem;width:22rem;height:22rem;border-radius:50%;background:radial-gradient(circle,color-mix(in oklab,var(--tech) 7%,transparent),transparent 68%);pointer-events:none}
+.quote-form>*{position:relative;z-index:1}
+.product-detail-card{background:linear-gradient(180deg,color-mix(in oklab,var(--card) 99%,var(--tech)),var(--card))}
+.product-detail-aside{background:radial-gradient(circle at 100% 0%,color-mix(in oklab,var(--tech) 18%,transparent),transparent 18rem),var(--ink)}
+@media (min-width:1024px){.product-detail-card,.product-detail-aside{min-height:36rem}}
