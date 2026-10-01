@@ -515,3 +515,8 @@ section.py-16 > .container-shell {
 .product-detail-card{background:linear-gradient(180deg,color-mix(in oklab,var(--card) 99%,var(--tech)),var(--card))}
 .product-detail-aside{background:radial-gradient(circle at 100% 0%,color-mix(in oklab,var(--tech) 18%,transparent),transparent 18rem),var(--ink)}
 @media (min-width:1024px){.product-detail-card,.product-detail-aside{min-height:36rem}}
+
+.project-scope-card{min-height:100%;display:flex;flex-direction:column}.project-scope-card p:last-child{margin-top:auto;padding-top:1.25rem}
+.contact-cta{position:relative;overflow:hidden}.contact-cta:after{content:"";position:absolute;inset-inline-end:-7rem;top:-7rem;width:18rem;height:18rem;border-radius:50%;border:1px solid oklch(1 0 0 / .1);box-shadow:0 0 0 3rem oklch(1 0 0 / .025),0 0 0 6rem oklch(1 0 0 / .018);pointer-events:none}.contact-cta>*{position:relative;z-index:1}
+html{scroll-behavior:smooth}::selection{background:color-mix(in oklab,var(--tech) 25%,transparent);color:var(--foreground)}
+@media (max-width:767px){.quote-form{border-radius:1.25rem}.contact-cta{border-radius:1.25rem}.project-scope-card{min-height:15rem}}
