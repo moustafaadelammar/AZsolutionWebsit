@@ -22,6 +22,7 @@ type Lead = {
   status?: LeadStatus;
   priority?: LeadPriority;
   source?: LeadSource;
+  campaign?: string;
   notes?: string;
   updatedAt?: string;
   attachment?: { name: string; size: number; type: string };
@@ -131,7 +132,7 @@ function AdminPage() {
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return leads.filter((lead) => {
-      const hay = [lead.id, lead.name, lead.phone, lead.email, lead.service, lead.details, lead.notes].join(" ").toLowerCase();
+      const hay = [lead.id, lead.name, lead.phone, lead.email, lead.service, lead.details, lead.notes, lead.campaign].join(" ").toLowerCase();
       return hay.includes(q) && (statusFilter === "all" || (lead.status || "new") === statusFilter);
     });
   }, [leads, query, statusFilter]);
@@ -156,11 +157,11 @@ function AdminPage() {
   };
 
   const exportCsv = () => {
-    const headers = ["ID", "Created At", "Name", "Phone", "Email", "Service", "Selected Items", "Status", "Priority", "Source", "Details", "Notes", "Quotation Amount", "Currency", "Next Follow-up", "Attachment"];
+    const headers = ["ID", "Created At", "Name", "Phone", "Email", "Service", "Selected Items", "Status", "Priority", "Source", "Campaign", "Details", "Notes", "Quotation Amount", "Currency", "Next Follow-up", "Attachment"];
     const esc = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`;
     const rows = leads.map((lead) => [
       lead.id, lead.createdAt, lead.name, lead.phone, lead.email, lead.service,
-      lead.selectedItems?.join(" | "), statusLabel(lead.status || "new"), priorityLabel(lead.priority || "normal"), sourceLabel(lead.source || "website-quote"), lead.details, lead.notes,
+      lead.selectedItems?.join(" | "), statusLabel(lead.status || "new"), priorityLabel(lead.priority || "normal"), sourceLabel(lead.source || "website-quote"), lead.campaign || "", lead.details, lead.notes,
       lead.quotationAmount ?? "", lead.quotationCurrency || "", lead.nextFollowUpAt || "", lead.attachment ? `${lead.attachment.name} (${lead.attachment.size} bytes)` : "",
     ].map(esc).join(","));
     const csv = "\uFEFF" + [headers.map(esc).join(","), ...rows].join("\n");
@@ -303,7 +304,7 @@ function AdminPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-tech-soft px-2.5 py-1 text-xs font-bold text-tech">{lead.id}</span>
                     <span className="text-xs text-muted-foreground">{new Date(lead.createdAt).toLocaleString(ar ? "ar-EG" : "en-US")}</span>
-                    <span className="rounded-full border border-border px-2.5 py-1 text-xs font-semibold">{statusLabel(lead.status || "new")}</span><span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold">{priorityLabel(lead.priority || "normal")}</span><span className="rounded-full bg-secondary px-2.5 py-1 text-xs">{sourceLabel(lead.source || "website-quote")}</span>
+                    <span className="rounded-full border border-border px-2.5 py-1 text-xs font-semibold">{statusLabel(lead.status || "new")}</span><span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold">{priorityLabel(lead.priority || "normal")}</span><span className="rounded-full bg-secondary px-2.5 py-1 text-xs">{sourceLabel(lead.source || "website-quote")}</span>{lead.campaign && <span className="rounded-full bg-tech-soft px-2.5 py-1 text-xs font-semibold text-tech">{lead.campaign}</span>}
                   </div>
                   <h2 className="mt-3 text-xl font-bold">{lead.name}</h2>
                   <p className="mt-1 text-sm" dir="ltr">{lead.phone}</p>
