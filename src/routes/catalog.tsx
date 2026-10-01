@@ -80,7 +80,7 @@ function CatalogPage() {
 
     <section className="py-16 md:py-24">
       <div className="container-shell">
-        <div className="mx-auto max-w-3xl">
+        <div className="catalog-toolbar mx-auto max-w-3xl rounded-2xl border border-border/80 bg-background/95 p-3 shadow-lg backdrop-blur">
           <div className="relative">
             <Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <input value={q} onChange={(e) => setQ(e.target.value)}
@@ -118,14 +118,14 @@ function CatalogPage() {
           </div>
         )}
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(({ slug, title, category: itemCategory, description, icon: Icon }) => {
             const itemTitle = ar ? title.ar : title.en;
             const itemSku = `${catalog.find((x) => x.slug === slug)?.skuPrefix || "AZ"}-${slug.toUpperCase()}`;
             const item = catalog.find((x) => x.slug === slug)!;
             const isSelected = selected.includes(itemTitle);
             return (
-              <article key={slug} className="content-card p-7">
+              <article key={slug} className="content-card catalog-card p-7">
                 <div className="flex items-start justify-between gap-3">
                   <span className="grid size-12 place-items-center rounded-xl bg-tech-soft text-tech"><Icon className="size-5" /></span>
                   <span className="rounded-full bg-secondary px-3 py-1 text-[10px] font-bold">{ar ? itemCategory.ar : itemCategory.en}</span>
@@ -134,7 +134,7 @@ function CatalogPage() {
                 <p className="mt-3 text-sm leading-7 text-muted-foreground">{ar ? description.ar : description.en}</p>
                 <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-semibold"><span className="rounded-full border border-border px-2.5 py-1">SKU: {itemSku}</span><span className="rounded-full border border-border px-2.5 py-1">{stockLabel(item.stockState)}</span><span className="rounded-full border border-border px-2.5 py-1">{unitLabel(item.unit)}</span></div>
                 <p className="mt-3 text-xs text-muted-foreground">{ar ? "العلامات: " : "Brands: "}{item.brands.join(" · ")}</p>
-                <div className="mt-6 grid gap-2 sm:grid-cols-3">
+                <div className="catalog-card-actions grid gap-2 sm:grid-cols-3">
                   <Button asChild variant="outline"><Link to="/catalog/$slug" params={{ slug }}>{ar ? "التفاصيل" : "Details"}<Arrow /></Link></Button>
                   <Button type="button" variant={isSelected ? "secondary" : "default"} onClick={() => addToRequest(itemTitle)} disabled={isSelected}>
                     {isSelected ? <><Check />{ar ? "تمت الإضافة" : "Added"}</> : ar ? "أضف للطلب" : "Add to request"}
