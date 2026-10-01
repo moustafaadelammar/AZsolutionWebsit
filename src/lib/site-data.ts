@@ -17,6 +17,7 @@ export const SITE_CONFIG = {
   mapsUrl: "#contact-placeholder",
   businessHours: { ar: "الأحد–الخميس | 8:30 ص–5:00 م", en: "Sun–Thu | 8:30 AM–5:00 PM" },
   social: ["LinkedIn", "Facebook"],
+  tagline: { ar: "حلول تقنية أعمال متكاملة", en: "Integrated business technology solutions" },
 } as const;
 
 export const navItems = [
