@@ -1,0 +1,14 @@
+import type { ContentItem, LocalText } from "./site-data";
+import { Cable, Camera, HardDrive, KeyRound, Network, Router, Server, ShieldCheck, Zap } from "lucide-react";
+export type CatalogItem = ContentItem & { slug: string; category: LocalText; featured?: boolean };
+export const catalog: CatalogItem[] = [
+ {slug:"networking",title:{ar:"معدات الشبكات",en:"Networking Equipment"},category:{ar:"شبكات",en:"Networking"},description:{ar:"سويتشات وراوترات ونقاط وصول وملحقات ربط للمؤسسات.",en:"Switches, routers, access points and connectivity accessories for organizations."},icon:Network,featured:true},
+ {slug:"servers-storage",title:{ar:"الخوادم والتخزين",en:"Servers & Storage"},category:{ar:"بنية تحتية",en:"Infrastructure"},description:{ar:"خوادم وتخزين وملحقات مراكز البيانات حسب الحمل والاحتياج.",en:"Servers, storage and data-center accessories sized to your workload."},icon:Server,featured:true},
+ {slug:"firewalls",title:{ar:"الجدران النارية",en:"Firewalls"},category:{ar:"أمن الشبكات",en:"Network Security"},description:{ar:"حلول حماية الشبكات وإدارة الوصول والاتصال الآمن.",en:"Network protection, access control and secure connectivity solutions."},icon:ShieldCheck,featured:true},
+ {slug:"cctv",title:{ar:"كاميرات المراقبة",en:"CCTV Systems"},category:{ar:"أمن ومراقبة",en:"Security"},description:{ar:"كاميرات ومسجلات وتخزين ومستلزمات تركيب للمواقع.",en:"Cameras, recorders, storage and installation accessories."},icon:Camera,featured:true},
+ {slug:"access-control",title:{ar:"التحكم في الدخول",en:"Access Control"},category:{ar:"أمن ومراقبة",en:"Security"},description:{ar:"أجهزة تحكم في الأبواب والحضور وإدارة صلاحيات الدخول.",en:"Door control, attendance and access-permission systems."},icon:KeyRound},
+ {slug:"ups",title:{ar:"UPS والطاقة الاحتياطية",en:"UPS & Backup Power"},category:{ar:"استمرارية التشغيل",en:"Continuity"},description:{ar:"حلول حماية الطاقة للأجهزة والخوادم والشبكات.",en:"Power protection for servers, networks and critical equipment."},icon:Zap},
+ {slug:"cabling",title:{ar:"الكابلات والملحقات",en:"Cabling & Accessories"},category:{ar:"توريدات",en:"Supplies"},description:{ar:"كابلات شبكة وراك وPatch Panels وملحقات تنفيذ.",en:"Network cabling, racks, patch panels and deployment accessories."},icon:Cable},
+ {slug:"storage",title:{ar:"وحدات التخزين",en:"Storage Solutions"},category:{ar:"تخزين",en:"Storage"},description:{ar:"تخزين شبكي ووحدات أقراص وحلول توسعة للمؤسسات.",en:"Network storage, drives and scalable storage expansion."},icon:HardDrive},
+ {slug:"routers",title:{ar:"الراوترات",en:"Routers"},category:{ar:"شبكات",en:"Networking"},description:{ar:"حلول ربط الإنترنت والفروع وتوجيه حركة الشبكة.",en:"Internet, branch connectivity and routing solutions."},icon:Router}
+];
