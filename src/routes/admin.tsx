@@ -16,10 +16,13 @@ export const Route = createFileRoute("/admin")({ head: () => ({ meta: [
 function AdminPage() {
   const { language } = useLanguage();
   const ar = language === "ar";
-  const [leads, setLeads] = useState<Lead[]>([]);\n  const [query, setQuery] = useState("");\n  const [statusFilter, setStatusFilter] = useState<"all" | LeadStatus>("all");
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [query, setQuery] = useState("");\n  const [statusFilter, setStatusFilter] = useState<"all" | LeadStatus>("all");
   const load = () => setLeads(JSON.parse(localStorage.getItem("az-leads") || "[]") as Lead[]);
   useEffect(() => { load(); }, []);
-  const clear = () => { localStorage.removeItem("az-leads"); localStorage.removeItem("az-last-lead"); load(); };\n  const updateStatus = (id:string, status:LeadStatus) => { const next=leads.map(lead => lead.id===id ? {...lead,status} : lead); setLeads(next); localStorage.setItem("az-leads", JSON.stringify(next)); };\n  const visible = leads.filter(lead => { const hay=[lead.id,lead.name,lead.phone,lead.email,lead.service,lead.details].join(" ").toLowerCase(); return hay.includes(query.toLowerCase()) && (statusFilter==="all" || (lead.status||"new")===statusFilter); });\n  const statusLabel = (status:LeadStatus) => ({new:ar?"جديد":"New",contacted:ar?"تم التواصل":"Contacted",quoted:ar?"تم التسعير":"Quoted",won:ar?"تمت الصفقة":"Won",lost:ar?"مغلق":"Lost"}[status]);
+  const clear = () => { localStorage.removeItem("az-leads"); localStorage.removeItem("az-last-lead"); load(); };
+  const updateStatus = (id:string, status:LeadStatus) => { const next=leads.map(lead => lead.id===id ? {...lead,status} : lead); setLeads(next); localStorage.setItem("az-leads", JSON.stringify(next)); };
+  const visible = leads.filter(lead => { const hay=[lead.id,lead.name,lead.phone,lead.email,lead.service,lead.details].join(" ").toLowerCase(); return hay.includes(query.toLowerCase()) && (statusFilter==="all" || (lead.status||"new")===statusFilter); });\n  const statusLabel = (status:LeadStatus) => ({new:ar?"جديد":"New",contacted:ar?"تم التواصل":"Contacted",quoted:ar?"تم التسعير":"Quoted",won:ar?"تمت الصفقة":"Won",lost:ar?"مغلق":"Lost"}[status]);
   const copy = async (lead: Lead) => {
     const text = [
       `AZ Solution — ${lead.id}`, `Name: ${lead.name}`, `Phone: ${lead.phone}`,
