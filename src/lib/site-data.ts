@@ -27,6 +27,7 @@ export const navItems = [
   { to: "/projects", label: { ar: "المشروعات", en: "Projects" } },
   { to: "/about", label: { ar: "من نحن", en: "About" } },
   { to: "/contact", label: { ar: "تواصل معنا", en: "Contact" } },
+  { to: "/business", label: { ar: "إدارة الشركة", en: "Business OS" } },
 ] as const;
 
 export type ContentItem = {
