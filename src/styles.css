@@ -494,3 +494,17 @@ section.py-16 > .container-shell {
     animation: reveal-up .55s ease both;
   }
 }
+
+
+/* Final public-site polish */
+.header-contact{display:none;align-items:center;gap:.45rem;color:var(--muted-foreground);font-size:.7rem;font-weight:700;white-space:nowrap}
+.brand-lockup{transition:transform .2s ease,opacity .2s ease}.brand-lockup:hover{transform:translateY(-1px);opacity:.94}
+.mobile-menu{background:var(--background);}
+.mobile-nav-link{border-bottom:1px solid var(--border);padding:.9rem .25rem;font-weight:700;transition:padding .2s ease,color .2s ease}.mobile-nav-link:hover{padding-inline-start:.6rem;color:var(--tech)}
+.footer-bottom{border-top:1px solid var(--ink-line)}
+.footer-bottom-inner{gap:1rem;flex-wrap:wrap}
+.catalog-toolbar{position:sticky;top:5.5rem;z-index:20}
+.catalog-card{display:flex;min-height:100%;flex-direction:column}
+.catalog-card-actions{margin-top:auto;padding-top:1.5rem}
+@media (min-width:1200px){.header-contact{display:flex}.desktop-nav{margin-inline:auto}.header-inner{gap:1rem}}
+@media (max-width:767px){.header-actions{display:none}.brand-sub{font-size:.47rem;letter-spacing:.08em}.brand-name{font-size:.88rem}.brand-mark{width:2.35rem;height:2.35rem}.mobile-actions{gap:.35rem}.mobile-menu{width:min(88vw,23rem)}.footer-bottom-inner{font-size:.68rem}}
