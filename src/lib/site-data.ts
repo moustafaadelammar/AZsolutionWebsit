@@ -21,6 +21,7 @@ export const navItems = [
   { to: "/", label: { ar: "الرئيسية", en: "Home" } },
   { to: "/services", label: { ar: "الخدمات", en: "Services" } },
   { to: "/solutions", label: { ar: "الحلول والمنتجات", en: "Solutions" } },
+  { to: "/catalog", label: { ar: "الكتالوج", en: "Catalog" } },
   { to: "/projects", label: { ar: "المشروعات", en: "Projects" } },
   { to: "/about", label: { ar: "من نحن", en: "About" } },
   { to: "/contact", label: { ar: "تواصل معنا", en: "Contact" } },
