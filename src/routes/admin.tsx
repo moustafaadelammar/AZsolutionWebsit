@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ClipboardList, Copy, Download, Search, Trash2, Users, CheckCircle2, Clock3, FileText } from "lucide-react";
+import { ClipboardList, Copy, Download, Search, Trash2, Users, CheckCircle2, Clock3, FileText, Package } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/language-provider";
 import { PageIntro } from "@/components/site-sections";
+import { Link } from "@tanstack/react-router";
 
 type LeadStatus = "new" | "contacted" | "quoted" | "won" | "lost";
 type Lead = {
@@ -134,6 +135,9 @@ function AdminPage() {
     />
 
     <section className="bg-secondary py-10 md:py-14">
+      <div className="container-shell mb-6 flex flex-wrap gap-2">
+        <Button asChild variant="outline"><Link to="/inventory"><Package />{ar ? "إدارة المخزون والمنتجات" : "Inventory & Products"}</Link></Button>
+      </div>
       <div className="container-shell">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {statCards.map(({ label, value, icon: Icon }) => (
