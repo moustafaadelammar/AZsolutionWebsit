@@ -104,13 +104,14 @@ export function SiteFooter() {
             {navItems.slice(1, 7).map((item) => <Link key={item.to} to={item.to}>{t(item.label)}</Link>)}
           </div>
         </div>
-        <div id="contact-placeholder">
+        <div>
           <h2>{language === "ar" ? "بيانات التواصل" : "Contact details"}</h2>
           <div className="footer-contact">
-            <span>{SITE_CONFIG.phone}</span><span>{SITE_CONFIG.email}</span><span>{SITE_CONFIG.address}</span>
+            <a href={`tel:${SITE_CONFIG.phone.replace(/\\D/g, "")}`}>{SITE_CONFIG.phone}</a>
+            {SITE_CONFIG.email ? <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a> : null}
+            {SITE_CONFIG.address ? <span>{SITE_CONFIG.address}</span> : null}
             <span className="footer-hours"><Clock3 />{t(SITE_CONFIG.businessHours)}</span>
           </div>
-          <p className="footer-note">{language === "ar" ? "أضف بيانات التواصل الحقيقية قبل الإطلاق." : "Add the real contact details before launch."}</p>
         </div>
       </div>
       <div className="footer-bottom">
