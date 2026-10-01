@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   import-site:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout target repository
@@ -19,40 +20,10 @@ jobs:
       - name: Clone source repository
         run: git clone --depth 1 https://github.com/moustafaadelammar/github-progect.git /tmp/source
 
-      - name: Copy AZ Solution website
+      - name: Replace repository contents with AZ Solution website
         run: |
-          rm -rf ./* ./.??* 2>/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git ! -name .github -exec rm -rf {} +
           cp -R /tmp/source/az-solution/. .
-          rm -rf .git .github
-          mkdir -p .github/workflows
-          cat > .github/workflows/import-az-solution.yml <<'EOF'
-          name: Import AZ Solution Website
-          on:
-            push:
-              branches: [main]
-          permissions:
-            contents: write
-          jobs:
-            import-site:
-              if: github.actor != 'github-actions[bot]'
-              runs-on: ubuntu-latest
-              steps:
-                - uses: actions/checkout@v4
-                  with:
-                    fetch-depth: 0
-                - run: git clone --depth 1 https://github.com/moustafaadelammar/github-progect.git /tmp/source
-                - run: |
-                    rm -rf ./* ./.??* 2>/dev/null || true
-                    cp -R /tmp/source/az-solution/. .
-                    rm -rf .git .github
-                    mkdir -p .github/workflows
-                    cp /tmp/source/az-solution/.github/workflows/import-az-solution.yml .github/workflows/import-az-solution.yml 2>/dev/null || true
-                    git config user.name 'github-actions[bot]'
-                    git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-                    git add -A
-                    git commit -m 'Sync AZ Solution website' || exit 0
-                    git push origin main
-          EOF
 
       - name: Commit imported website
         run: |
