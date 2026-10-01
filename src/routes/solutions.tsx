@@ -1,0 +1,8 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Boxes } from "lucide-react";
+import { ContentGrid, PageIntro, QuoteBand, SectionHeading } from "@/components/site-sections";
+import { solutions } from "@/lib/site-data";
+
+export const Route = createFileRoute("/solutions")({ head: () => ({ meta: [
+  { title: "Products & Solutions | AZ Solution BNS" }, { name: "description", content: "Explore servers, networking, firewalls, CCTV, access control, VoIP, UPS, cables and IT accessories." }, { property: "og:title", content: "Products & Solutions | AZ Solution BNS" }, { property: "og:description", content: "Business technology categories selected and specified around your operational requirements." }, { property: "og:type", content: "website" }, { property: "og:url", content: "/solutions" }, { name: "twitter:card", content: "summary_large_image" }], links: [{ rel: "canonical", href: "/solutions" }] }), component: SolutionsPage });
+function SolutionsPage() { return <><PageIntro icon={Boxes} eyebrow={{ ar: "المنتجات والحلول", en: "Products & Solutions" }} title={{ ar: "المكوّن المناسب ضمن حل متكامل", en: "The right component within a complete solution" }} description={{ ar: "نرتب المنتجات حسب الوظيفة والاستخدام، ونحدد المواصفات بعد فهم بيئة العمل — الموقع ليس متجراً إلكترونياً.", en: "We organize products by function and define specifications after understanding the workplace—this is not an ecommerce catalog." }} /><section className="py-20 md:py-28"><div className="container-shell"><SectionHeading eyebrow={{ ar: "الفئات", en: "Categories" }} title={{ ar: "من الشبكة الأساسية إلى ملحقات التشغيل", en: "From the core network to operating accessories" }} /><ContentGrid items={solutions} /></div></section><QuoteBand /></> }
