@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowUpRight, Languages, MapPin, Menu, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -16,6 +17,8 @@ function Brand() {
     </Link>
   );
 }
+
+function RequestCount() { const [count,setCount]=useState(0); useEffect(()=>{const load=()=>setCount((JSON.parse(localStorage.getItem("az-quote-items")||"[]") as string[]).length); load(); window.addEventListener("az-quote-updated",load); return ()=>window.removeEventListener("az-quote-updated",load);},[]); if(!count) return null; return <span className="absolute -end-2 -top-2 grid min-w-5 h-5 place-items-center rounded-full bg-tech px-1 text-[10px] font-bold text-white">{count}</span>; }
 
 function LanguageSwitch() {
   const { language, setLanguage } = useLanguage();
@@ -43,7 +46,7 @@ export function SiteHeader() {
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
           <LanguageSwitch />
-          <Button asChild size="lg"><Link to="/quote">{language === "ar" ? "اطلب عرض سعر" : "Request a Quote"}<ArrowUpRight /></Link></Button>
+          <div className="relative"><Button asChild size="lg"><Link to="/quote">{language === "ar" ? "اطلب عرض سعر" : "Request a Quote"}<ArrowUpRight /></Link></Button><RequestCount /></div>
         </div>
         <div className="flex items-center gap-1 lg:hidden">
           <LanguageSwitch />
