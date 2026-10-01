@@ -70,7 +70,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   const { language, t } = useLanguage();
   return (
-    <footer className="bg-ink text-ink-foreground">
+    <div className="container-shell pb-4"><Link to="/business" className="text-xs font-semibold text-muted-foreground hover:text-foreground">{language === "ar" ? "مركز تشغيل الشركة" : "Business Operations Center"}</Link></div>\n<footer className="bg-ink text-ink-foreground">
       <div className="container-shell grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div className="max-w-md">
           <div className="font-display text-2xl font-bold">AZ Solution <span className="text-tech">BNS</span></div>
