@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ClipboardList, Copy, Download, Search, Trash2, Users, CheckCircle2, Clock3, FileText, Package } from "lucide-react";
+import { ClipboardList, Copy, Download, Search, Trash2, Users, CheckCircle2, Clock3, FileText, Package, Upload, DatabaseBackup, CalendarClock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/language-provider";
@@ -19,7 +19,7 @@ type Lead = {
   status?: LeadStatus;
   notes?: string;
   updatedAt?: string;
-  attachment?: { name: string; size: number; type: string };
+  attachment?: { name: string; size: number; type: string };\n  quotationAmount?: number;\n  quotationCurrency?: "EGP" | "USD";\n  nextFollowUpAt?: string;
 };
 
 const statuses: LeadStatus[] = ["new", "contacted", "quoted", "won", "lost"];
@@ -57,6 +57,35 @@ function AdminPage() {
 
   const updateLead = (id: string, patch: Partial<Lead>) => {
     persist(leads.map((lead) => lead.id === id ? { ...lead, ...patch, updatedAt: new Date().toISOString() } : lead));
+  };
+
+  const backupData = () => {
+    const payload = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      leads,
+      inventory: JSON.parse(localStorage.getItem("az-inventory") || "[]"),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `az-solution-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const restoreData = async (file: File) => {
+    try {
+      const payload = JSON.parse(await file.text()) as { leads?: Lead[]; inventory?: unknown[] };
+      if (!Array.isArray(payload.leads)) throw new Error("Invalid backup");
+      localStorage.setItem("az-leads", JSON.stringify(payload.leads));
+      if (Array.isArray(payload.inventory)) localStorage.setItem("az-inventory", JSON.stringify(payload.inventory));
+      load();
+      window.alert(ar ? "تم استرجاع النسخة الاحتياطية." : "Backup restored successfully.");
+    } catch {
+      window.alert(ar ? "ملف النسخة الاحتياطية غير صالح." : "Invalid backup file.");
+    }
   };
 
   const clear = () => {
@@ -102,7 +131,7 @@ function AdminPage() {
   };
 
   const exportCsv = () => {
-    const headers = ["ID", "Created At", "Name", "Phone", "Email", "Service", "Selected Items", "Status", "Details", "Notes"];
+    const headers = ["ID", "Created At", "Name", "Phone", "Email", "Service", "Selected Items", "Status", "Details", "Notes", "Quotation Amount", "Currency", "Next Follow-up", "Attachment"];
     const esc = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`;
     const rows = leads.map((lead) => [
       lead.id, lead.createdAt, lead.name, lead.phone, lead.email, lead.service,
@@ -119,11 +148,17 @@ function AdminPage() {
     URL.revokeObjectURL(url);
   };
 
+  const quotedValue = leads.reduce((sum, lead) => sum + (Number(lead.quotationAmount) || 0), 0);
+  const currencyCounts = leads.reduce<Record<string, number>>((acc, lead) => {
+    if (lead.quotationAmount) acc[lead.quotationCurrency || "EGP"] = (acc[lead.quotationCurrency || "EGP"] || 0) + Number(lead.quotationAmount);
+    return acc;
+  }, {});
+
   const statCards = [
     { label: ar ? "كل الطلبات" : "Total", value: leads.length, icon: Users },
     { label: ar ? "جديد" : "New", value: counts.new, icon: Clock3 },
     { label: ar ? "تم التسعير" : "Quoted", value: counts.quoted, icon: FileText },
-    { label: ar ? "تمت الصفقة" : "Won", value: counts.won, icon: CheckCircle2 },
+    { label: ar ? "تمت الصفقة" : "Won", value: counts.won, icon: CheckCircle2 },\n    { label: ar ? "قيمة العروض" : "Quoted value", value: quotedValue.toLocaleString(ar ? "ar-EG" : "en-US"), icon: FileText },
   ];
 
   return <>
@@ -202,6 +237,25 @@ function AdminPage() {
                     {statusLabel(status)}
                   </button>
                 ))}
+              </div>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{ar ? "قيمة العرض" : "Quotation value"}</p>
+                  <div className="mt-2 flex gap-2">
+                    <input type="number" min="0" value={lead.quotationAmount ?? ""} onChange={(e) => updateLead(lead.id, { quotationAmount: e.target.value === "" ? undefined : Math.max(0, Number(e.target.value)) })} placeholder="0" className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+                    <select value={lead.quotationCurrency || "EGP"} onChange={(e) => updateLead(lead.id, { quotationCurrency: e.target.value as "EGP" | "USD" })} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+                      <option value="EGP">EGP</option><option value="USD">USD</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{ar ? "المتابعة القادمة" : "Next follow-up"}</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <CalendarClock className="h-4 w-4 text-tech" />
+                    <input type="datetime-local" value={lead.nextFollowUpAt || ""} onChange={(e) => updateLead(lead.id, { nextFollowUpAt: e.target.value || undefined })} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+                  </div>
+                </div>
               </div>
 
               <div className="mt-5 grid gap-4 md:grid-cols-2">
