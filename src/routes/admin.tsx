@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ClipboardList, Copy, Download, Search, Trash2, Users, CheckCircle2, Clock3, FileText, Package, Upload, DatabaseBackup, CalendarClock } from "lucide-react";
+import { ClipboardList, Copy, Download, Search, Trash2, Users, CheckCircle2, Clock3, FileText, Package, Upload, DatabaseBackup, CalendarClock, Phone, Mail, Megaphone, Link2, Save, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/language-provider";
@@ -7,6 +7,9 @@ import { PageIntro } from "@/components/site-sections";
 import { Link } from "@tanstack/react-router";
 
 type LeadStatus = "new" | "contacted" | "quoted" | "won" | "lost";
+type LeadPriority = "low" | "normal" | "high" | "urgent";
+type LeadSource = "website-quote" | "whatsapp" | "phone" | "referral" | "other";
+type Campaign = { id: string; name: string; channel: "facebook" | "instagram" | "google" | "whatsapp"; objective: "leads" | "traffic" | "awareness" | "retargeting"; budget: number; startDate: string; endDate: string; offer: string; cta: string; status: "draft" | "ready" | "active" | "paused"; createdAt: string; };
 type Lead = {
   id: string;
   createdAt: string;
@@ -17,6 +20,8 @@ type Lead = {
   details: string;
   selectedItems: string[];
   status?: LeadStatus;
+  priority?: LeadPriority;
+  source?: LeadSource;
   notes?: string;
   updatedAt?: string;
   attachment?: { name: string; size: number; type: string };
@@ -41,17 +46,24 @@ function AdminPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | LeadStatus>("all");
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [campaignName, setCampaignName] = useState("");
+  const [campaignChannel, setCampaignChannel] = useState<Campaign["channel"]>("facebook");
+  const [campaignObjective, setCampaignObjective] = useState<Campaign["objective"]>("leads");
+  const [campaignBudget, setCampaignBudget] = useState("1000");
+  const [campaignOffer, setCampaignOffer] = useState("25% off first 50 customers");
+  const [campaignCta, setCampaignCta] = useState("Request a Quote");
 
   const load = () => {
     try {
       const saved = JSON.parse(localStorage.getItem("az-leads") || "[]") as Lead[];
-      setLeads(saved.map((lead) => ({ ...lead, status: lead.status || "new" })));
+      setLeads(saved.map((lead) => ({ ...lead, status: lead.status || "new", priority: lead.priority || "normal", source: lead.source || "website-quote" })));
     } catch {
       setLeads([]);
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); try { setCampaigns(JSON.parse(localStorage.getItem("az-campaigns") || "[]") as Campaign[]); } catch { setCampaigns([]); } }, []);
 
   const persist = (next: Lead[]) => {
     setLeads(next);
@@ -61,6 +73,16 @@ function AdminPage() {
   const updateLead = (id: string, patch: Partial<Lead>) => {
     persist(leads.map((lead) => lead.id === id ? { ...lead, ...patch, updatedAt: new Date().toISOString() } : lead));
   };
+
+  const priorityLabel = (priority: LeadPriority) => ({ low: ar ? "منخفضة" : "Low", normal: ar ? "عادية" : "Normal", high: ar ? "عالية" : "High", urgent: ar ? "عاجلة" : "Urgent" }[priority]);
+  const sourceLabel = (source: LeadSource) => ({ "website-quote": ar ? "الموقع" : "Website", whatsapp: "WhatsApp", phone: ar ? "هاتف" : "Phone", referral: ar ? "ترشيح" : "Referral", other: ar ? "أخرى" : "Other" }[source]);
+  const saveCampaign = () => {
+    const campaign: Campaign = { id: `CMP-${Date.now().toString(36).toUpperCase()}`, name: campaignName.trim() || (ar ? "حملة جديدة" : "New campaign"), channel: campaignChannel, objective: campaignObjective, budget: Math.max(0, Number(campaignBudget) || 0), startDate: new Date().toISOString().slice(0,10), endDate: "", offer: campaignOffer.trim(), cta: campaignCta.trim() || "Request a Quote", status: "draft", createdAt: new Date().toISOString() };
+    const next = [campaign, ...campaigns]; setCampaigns(next); localStorage.setItem("az-campaigns", JSON.stringify(next)); setCampaignName("");
+  };
+  const campaignUtm = (campaign: Campaign) => `https://azsolution.example/quote?utm_source=${campaign.channel}&utm_medium=paid&utm_campaign=${encodeURIComponent(campaign.name.toLowerCase().replace(/\\s+/g,"-"))}`;
+  const copyCampaign = async (campaign: Campaign) => { const text = [`Campaign: ${campaign.name}`, `Channel: ${campaign.channel}`, `Objective: ${campaign.objective}`, `Budget: ${campaign.budget} EGP`, `Offer: ${campaign.offer}`, `CTA: ${campaign.cta}`, `UTM: ${campaignUtm(campaign)}`].join("\\n"); await navigator.clipboard?.writeText(text); };
+  const updateCampaign = (id: string, patch: Partial<Campaign>) => { const next = campaigns.map((x) => x.id === id ? { ...x, ...patch } : x); setCampaigns(next); localStorage.setItem("az-campaigns", JSON.stringify(next)); };
 
   const backupData = () => {
     const payload = {
@@ -134,11 +156,11 @@ function AdminPage() {
   };
 
   const exportCsv = () => {
-    const headers = ["ID", "Created At", "Name", "Phone", "Email", "Service", "Selected Items", "Status", "Details", "Notes", "Quotation Amount", "Currency", "Next Follow-up", "Attachment"];
+    const headers = ["ID", "Created At", "Name", "Phone", "Email", "Service", "Selected Items", "Status", "Priority", "Source", "Details", "Notes", "Quotation Amount", "Currency", "Next Follow-up", "Attachment"];
     const esc = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`;
     const rows = leads.map((lead) => [
       lead.id, lead.createdAt, lead.name, lead.phone, lead.email, lead.service,
-      lead.selectedItems?.join(" | "), statusLabel(lead.status || "new"), lead.details, lead.notes,
+      lead.selectedItems?.join(" | "), statusLabel(lead.status || "new"), priorityLabel(lead.priority || "normal"), sourceLabel(lead.source || "website-quote"), lead.details, lead.notes,
       lead.quotationAmount ?? "", lead.quotationCurrency || "", lead.nextFollowUpAt || "", lead.attachment ? `${lead.attachment.name} (${lead.attachment.size} bytes)` : "",
     ].map(esc).join(","));
     const csv = "\uFEFF" + [headers.map(esc).join(","), ...rows].join("\n");
@@ -156,6 +178,9 @@ function AdminPage() {
     if (amount > 0) acc[lead.quotationCurrency || "EGP"] += amount;
     return acc;
   }, { EGP: 0, USD: 0 });
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayFollowUps = leads.filter((lead) => lead.nextFollowUpAt?.slice(0, 10) === todayKey && lead.status !== "won" && lead.status !== "lost").length;
 
   const overdueFollowUps = leads.filter((lead) => {
     if (!lead.nextFollowUpAt || lead.status === "won" || lead.status === "lost") return false;
@@ -175,6 +200,7 @@ function AdminPage() {
     { label: ar ? "تمت الصفقة" : "Won", value: counts.won, icon: CheckCircle2 },
     { label: ar ? "عروض EGP" : "EGP quoted", value: currencyTotals.EGP.toLocaleString(ar ? "ar-EG" : "en-US"), icon: FileText },
     { label: ar ? "عروض USD" : "USD quoted", value: currencyTotals.USD.toLocaleString(ar ? "ar-EG" : "en-US"), icon: FileText },
+    { label: ar ? "متابعات اليوم" : "Today follow-ups", value: todayFollowUps, icon: CalendarClock },
     { label: ar ? "متابعات متأخرة" : "Overdue follow-ups", value: overdueFollowUps, icon: CalendarClock },
   ];
 
@@ -248,6 +274,23 @@ function AdminPage() {
           </p>
         </div>
 
+        <div className="mt-8 rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div><div className="flex items-center gap-2"><Megaphone className="h-5 w-5 text-tech" /><p className="font-bold">{ar ? "مركز الدعاية والنمو" : "Marketing & Growth Center"}</p></div><p className="mt-1 text-sm text-muted-foreground">{ar ? "خطط الحملات، جهّز عروض الإعلانات، وأنشئ روابط UTM لتعرف أي حملة جلبت العميل." : "Plan campaigns, prepare ad offers, and create UTM links so you can track which campaign generated each lead."}</p></div>
+            <span className="rounded-full bg-tech-soft px-3 py-1 text-xs font-bold text-tech">{ar ? "تشغيل محلي — جاهز للربط لاحقاً مع Meta/Google" : "Local workflow — ready for Meta/Google integration later"}</span>
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+            <input value={campaignName} onChange={(e)=>setCampaignName(e.target.value)} placeholder={ar ? "اسم الحملة" : "Campaign name"} className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
+            <select value={campaignChannel} onChange={(e)=>setCampaignChannel(e.target.value as Campaign["channel"])} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="facebook">Facebook</option><option value="instagram">Instagram</option><option value="google">Google</option><option value="whatsapp">WhatsApp</option></select>
+            <select value={campaignObjective} onChange={(e)=>setCampaignObjective(e.target.value as Campaign["objective"])} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="leads">{ar ? "عملاء محتملون" : "Leads"}</option><option value="traffic">{ar ? "زيارات" : "Traffic"}</option><option value="awareness">{ar ? "وعي" : "Awareness"}</option><option value="retargeting">{ar ? "إعادة استهداف" : "Retargeting"}</option></select>
+            <input type="number" min="0" value={campaignBudget} onChange={(e)=>setCampaignBudget(e.target.value)} placeholder="Budget EGP" className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
+            <input value={campaignOffer} onChange={(e)=>setCampaignOffer(e.target.value)} placeholder={ar ? "العرض" : "Offer"} className="h-10 rounded-md border border-input bg-background px-3 text-sm md:col-span-2" />
+            <input value={campaignCta} onChange={(e)=>setCampaignCta(e.target.value)} placeholder="CTA" className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
+            <Button onClick={saveCampaign}><Save />{ar ? "حفظ الحملة" : "Save campaign"}</Button>
+          </div>
+          {campaigns.length > 0 && <div className="mt-5 grid gap-3">{campaigns.slice(0,6).map((campaign)=><div key={campaign.id} className="rounded-xl border border-border bg-background p-4"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="font-bold">{campaign.name}</p><p className="text-xs text-muted-foreground">{campaign.channel} · {campaign.objective} · {campaign.budget.toLocaleString()} EGP</p></div><div className="flex items-center gap-2"><select value={campaign.status} onChange={(e)=>updateCampaign(campaign.id,{status:e.target.value as Campaign["status"]})} className="h-9 rounded-md border border-input bg-background px-2 text-xs"><option value="draft">Draft</option><option value="ready">Ready</option><option value="active">Active</option><option value="paused">Paused</option></select><Button variant="outline" size="sm" onClick={()=>copyCampaign(campaign)}><Copy className="h-4 w-4" />{ar ? "نسخ" : "Copy"}</Button></div></div><div className="mt-3 grid gap-2 md:grid-cols-2"><div className="rounded-lg bg-secondary p-3 text-sm"><b>{ar ? "العرض:" : "Offer:"}</b> {campaign.offer}<br/><b>CTA:</b> {campaign.cta}</div><div className="rounded-lg bg-secondary p-3 text-xs break-all"><div className="mb-1 flex items-center gap-1 font-bold"><Link2 className="h-3.5 w-3.5" />UTM</div>{campaignUtm(campaign)}</div></div></div>)}</div>}
+        </div>
+
         <div className="mt-6 grid gap-4">
           {visible.length === 0 ? (
             <div className="border border-dashed border-border bg-card p-12 text-center text-muted-foreground">
@@ -260,13 +303,13 @@ function AdminPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-tech-soft px-2.5 py-1 text-xs font-bold text-tech">{lead.id}</span>
                     <span className="text-xs text-muted-foreground">{new Date(lead.createdAt).toLocaleString(ar ? "ar-EG" : "en-US")}</span>
-                    <span className="rounded-full border border-border px-2.5 py-1 text-xs font-semibold">{statusLabel(lead.status || "new")}</span>
+                    <span className="rounded-full border border-border px-2.5 py-1 text-xs font-semibold">{statusLabel(lead.status || "new")}</span><span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold">{priorityLabel(lead.priority || "normal")}</span><span className="rounded-full bg-secondary px-2.5 py-1 text-xs">{sourceLabel(lead.source || "website-quote")}</span>
                   </div>
                   <h2 className="mt-3 text-xl font-bold">{lead.name}</h2>
                   <p className="mt-1 text-sm" dir="ltr">{lead.phone}</p>
                   {lead.email && <p className="mt-1 text-sm text-muted-foreground" dir="ltr">{lead.email}</p>}
                 </div>
-                <Button variant="outline" onClick={() => copy(lead)}><Copy />{ar ? "نسخ الطلب" : "Copy request"}</Button>
+                <div className="flex flex-wrap gap-2"><a href={`tel:${lead.phone}`} className="inline-flex h-10 items-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium hover:bg-accent"><Phone className="h-4 w-4" />{ar ? "اتصال" : "Call"}</a>{lead.email && <a href={`mailto:${lead.email}`} className="inline-flex h-10 items-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium hover:bg-accent"><Mail className="h-4 w-4" />Email</a>}<Button variant="outline" onClick={() => copy(lead)}><Copy />{ar ? "نسخ الطلب" : "Copy request"}</Button></div>
               </div>
 
               {followUpLabel(lead) && (
@@ -286,7 +329,9 @@ function AdminPage() {
                 ))}
               </div>
 
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="mt-5 grid gap-4 md:grid-cols-4">
+                <div><p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{ar ? "الأولوية" : "Priority"}</p><select value={lead.priority || "normal"} onChange={(e) => updateLead(lead.id, { priority: e.target.value as LeadPriority })} className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm">{(["low","normal","high","urgent"] as LeadPriority[]).map((x) => <option key={x} value={x}>{priorityLabel(x)}</option>)}</select></div>
+                <div><p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{ar ? "المصدر" : "Source"}</p><select value={lead.source || "website-quote"} onChange={(e) => updateLead(lead.id, { source: e.target.value as LeadSource })} className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm">{(["website-quote","whatsapp","phone","referral","other"] as LeadSource[]).map((x) => <option key={x} value={x}>{sourceLabel(x)}</option>)}</select></div>
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{ar ? "قيمة العرض" : "Quotation value"}</p>
                   <div className="mt-2 flex gap-2">
