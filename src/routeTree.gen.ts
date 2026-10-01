@@ -92,7 +92,6 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRoute
 }
 export interface FileRoutesByTo {
-  '/business': typeof BusinessRoute
   '/admin': typeof AdminRoute
   '/catalog': typeof CatalogRoute
   '/catalog/$slug': typeof CatalogSlugRoute
@@ -106,7 +105,6 @@ export interface FileRoutesByTo {
   '/solutions': typeof SolutionsRoute
 }
 export interface FileRoutesById {
-  '/business': typeof BusinessRoute
   '/admin': typeof AdminRoute
   '/catalog': typeof CatalogRoute
   '/catalog/$slug': typeof CatalogSlugRoute
@@ -123,7 +121,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/business'
     | '/admin'
     | '/catalog'
     | '/catalog/$slug'
@@ -150,7 +147,6 @@ export interface FileRouteTypes {
     | '/services'
     | '/solutions'
   id:
-    | '/business'
     | '__root__'
     | '/admin'
     | '/catalog'
