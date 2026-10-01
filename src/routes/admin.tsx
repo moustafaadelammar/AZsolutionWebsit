@@ -153,18 +153,31 @@ function AdminPage() {
     URL.revokeObjectURL(url);
   };
 
-  const quotedValue = leads.reduce((sum, lead) => sum + (Number(lead.quotationAmount) || 0), 0);
-  const currencyCounts = leads.reduce<Record<string, number>>((acc, lead) => {
-    if (lead.quotationAmount) acc[lead.quotationCurrency || "EGP"] = (acc[lead.quotationCurrency || "EGP"] || 0) + Number(lead.quotationAmount);
+  const currencyTotals = leads.reduce<Record<"EGP" | "USD", number>>((acc, lead) => {
+    const amount = Number(lead.quotationAmount) || 0;
+    if (amount > 0) acc[lead.quotationCurrency || "EGP"] += amount;
     return acc;
-  }, {});
+  }, { EGP: 0, USD: 0 });
+
+  const overdueFollowUps = leads.filter((lead) => {
+    if (!lead.nextFollowUpAt || lead.status === "won" || lead.status === "lost") return false;
+    return new Date(lead.nextFollowUpAt).getTime() < Date.now();
+  }).length;
+
+  const followUpLabel = (lead: Lead) => {
+    if (!lead.nextFollowUpAt) return null;
+    const overdue = new Date(lead.nextFollowUpAt).getTime() < Date.now() && lead.status !== "won" && lead.status !== "lost";
+    return { overdue, text: new Date(lead.nextFollowUpAt).toLocaleString(ar ? "ar-EG" : "en-US") };
+  };
 
   const statCards = [
     { label: ar ? "كل الطلبات" : "Total", value: leads.length, icon: Users },
     { label: ar ? "جديد" : "New", value: counts.new, icon: Clock3 },
     { label: ar ? "تم التسعير" : "Quoted", value: counts.quoted, icon: FileText },
     { label: ar ? "تمت الصفقة" : "Won", value: counts.won, icon: CheckCircle2 },
-    { label: ar ? "قيمة العروض" : "Quoted value", value: quotedValue.toLocaleString(ar ? "ar-EG" : "en-US"), icon: FileText },
+    { label: ar ? "عروض EGP" : "EGP quoted", value: currencyTotals.EGP.toLocaleString(ar ? "ar-EG" : "en-US"), icon: FileText },
+    { label: ar ? "عروض USD" : "USD quoted", value: currencyTotals.USD.toLocaleString(ar ? "ar-EG" : "en-US"), icon: FileText },
+    { label: ar ? "متابعات متأخرة" : "Overdue follow-ups", value: overdueFollowUps, icon: CalendarClock },
   ];
 
   return <>
@@ -176,11 +189,16 @@ function AdminPage() {
     />
 
     <section className="bg-secondary py-10 md:py-14">
-      <div className="container-shell mb-6 flex flex-wrap gap-2">
-        <Button asChild variant="outline"><Link to="/inventory"><Package />{ar ? "إدارة المخزون والمنتجات" : "Inventory & Products"}</Link></Button>
+      <div className="container-shell mb-6 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline"><Link to="/inventory"><Package />{ar ? "إدارة المخزون والمنتجات" : "Inventory & Products"}</Link></Button>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          {ar ? "ملخص المبيعات:" : "Sales summary:"} EGP {currencyTotals.EGP.toLocaleString(ar ? "ar-EG" : "en-US")} · USD {currencyTotals.USD.toLocaleString(ar ? "ar-EG" : "en-US")}
+        </div>
       </div>
       <div className="container-shell">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
           {statCards.map(({ label, value, icon: Icon }) => (
             <div key={label} className="stat-card">
               <div className="flex items-center justify-between">
@@ -235,6 +253,14 @@ function AdminPage() {
                 </div>
                 <Button variant="outline" onClick={() => copy(lead)}><Copy />{ar ? "نسخ الطلب" : "Copy request"}</Button>
               </div>
+
+              {followUpLabel(lead) && (
+                <div className={`mt-4 flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${followUpLabel(lead)?.overdue ? "border-destructive/40 bg-destructive/5 text-destructive" : "border-border bg-secondary"}`}>
+                  <CalendarClock className="h-4 w-4" />
+                  <span className="font-semibold">{followUpLabel(lead)?.overdue ? (ar ? "متابعة متأخرة:" : "Overdue follow-up:") : (ar ? "المتابعة:" : "Follow-up:")}</span>
+                  <span>{followUpLabel(lead)?.text}</span>
+                </div>
+              )}
 
               <div className="mt-5 flex flex-wrap gap-2">
                 {statuses.map((status) => (
