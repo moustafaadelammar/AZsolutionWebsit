@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as BusinessRouteImport } from './routes/business'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as CatalogSlugRouteImport } from './routes/catalog/$slug'
@@ -42,6 +43,11 @@ const InventoryRoute = InventoryRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 
+const BusinessRoute = BusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -79,6 +85,7 @@ const SolutionsRoute = SolutionsRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/business': typeof BusinessRoute
   '/admin': typeof AdminRoute
   '/catalog': typeof CatalogRoute
   '/catalog/$slug': typeof CatalogSlugRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRoute
 }
 export interface FileRoutesByTo {
+  '/business': typeof BusinessRoute
   '/admin': typeof AdminRoute
   '/catalog': typeof CatalogRoute
   '/catalog/$slug': typeof CatalogSlugRoute
@@ -105,6 +113,7 @@ export interface FileRoutesByTo {
   '/solutions': typeof SolutionsRoute
 }
 export interface FileRoutesById {
+  '/business': typeof BusinessRoute
   '/admin': typeof AdminRoute
   '/catalog': typeof CatalogRoute
   '/catalog/$slug': typeof CatalogSlugRoute
@@ -121,6 +130,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/business'
     | '/admin'
     | '/catalog'
     | '/catalog/$slug'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/solutions'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/business'
     | '/admin'
     | '/catalog'
     | '/catalog/$slug'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/solutions'
   id:
+    | '/business'
     | '__root__'
     | '/admin'
     | '/catalog'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  BusinessRoute: typeof BusinessRoute
   AdminRoute: typeof AdminRoute
   CatalogRoute: typeof CatalogRoute
   CatalogSlugRoute: typeof CatalogSlugRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InventoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/business': {
+      id: '/business'
+      path: '/business'
+      fullPath: '/business'
+      preLoaderRoute: typeof BusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -257,6 +277,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  BusinessRoute: BusinessRoute,
   AdminRoute: AdminRoute,
   CatalogRoute: CatalogRoute,
   CatalogSlugRoute: CatalogSlugRoute,
